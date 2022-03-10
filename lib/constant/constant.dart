@@ -1,0 +1,1 @@
+var types = ["Today", "All days", "Upcoming"];
