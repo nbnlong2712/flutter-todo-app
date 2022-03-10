@@ -51,7 +51,7 @@ class _TaskScreenState extends State<TaskScreen> {
                 Column(
                   children: <Widget>[
                     SizedBox(
-                      height: MediaQuery.of(context).size.height,
+                      height: MediaQuery.of(context).size.height * 0.8,
                       width: MediaQuery.of(context).size.width,
                       child: ListView(
                         scrollDirection: Axis.vertical,
