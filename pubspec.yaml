@@ -17,6 +17,9 @@ dependencies:
   date_time_picker: ^2.1.0
   filter_list: ^1.0.1
   material_floating_search_bar: ^0.3.6
+  sqflite: ^2.0.2
+  path: ^1.8.0
+  intl: ^0.17.0
 
 dev_dependencies:
   flutter_test:

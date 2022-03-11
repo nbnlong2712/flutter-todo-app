@@ -1,11 +1,11 @@
 import 'package:filter_list/filter_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/constant/constant.dart';
+import 'package:flutter_todo/dao/task_dao.dart';
 import 'package:flutter_todo/model/task.dart';
 import 'package:flutter_todo/screen/add_task_screen.dart';
 import 'package:flutter_todo/widget/task_widget.dart';
 import 'package:flutter_todo/widget/app_search_bar.dart';
-import 'package:uuid/uuid.dart';
 
 class TaskScreen extends StatefulWidget {
   TaskScreen({Key? key}) : super(key: key);
@@ -15,13 +15,22 @@ class TaskScreen extends StatefulWidget {
 }
 
 class _TaskScreenState extends State<TaskScreen> {
-  final List<Task> _taskList = List.generate(
-      15, (index) => Task(Uuid(), "Task $index", "Day la content cua Task $index, This's content of Task $index", DateTime.now(), index % 2 == 0));
+  TaskDAO taskDAO = TaskDAO();
+
+  final List<Task> _taskList = [];
 
   List<String> selectedType = ["Today"];
 
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    taskDAO.getAllTaskFromDB().then((value) {
+      _taskList.addAll(value);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +51,6 @@ class _TaskScreenState extends State<TaskScreen> {
                   builder: (context) => SingleChildScrollView(
                     padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
                     child: AddTaskScreen(
-                      taskCallback: () {},
                       contentController: contentController,
                       titleController: titleController,
                     ),
