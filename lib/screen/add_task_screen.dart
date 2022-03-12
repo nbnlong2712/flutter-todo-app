@@ -1,6 +1,7 @@
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/dao/task_dao.dart';
+import 'package:flutter_todo/mobx/task_mobx.dart';
 import 'package:flutter_todo/model/task.dart';
 import 'package:uuid/uuid.dart';
 
@@ -21,7 +22,9 @@ class AddTaskScreen extends StatefulWidget {
 class _AddTaskScreenState extends State<AddTaskScreen> {
   TimeOfDay selectedTime = TimeOfDay.now();
   DateTime selectedDate = DateTime.now();
-
+  TaskDAO taskDAO = TaskDAO();
+  TaskMobx taskMobx = TaskMobx();
+  
   _pickTime(BuildContext context) async {
     final TimeOfDay? timeOfDay = await showTimePicker(
       context: context,
@@ -45,15 +48,18 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           borderSide: const BorderSide(color: Colors.black26), borderRadius: BorderRadius.circular(12)),
     );
   }
-
-  TaskDAO taskDAO = TaskDAO();
-
+  
   @override
-  void dispose() {
-    //taskDAO.close();
-    super.dispose();
+  void initState() {
+    taskMobx.initTasks();
+    super.initState();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -150,6 +156,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           DateTime(selectedDate.year, selectedDate.month, selectedDate.day, selectedTime.hour,
                               selectedTime.minute, 0),
                           false);
+                      TaskMobx().addTask(newTask);
                       taskDAO.insert(newTask);
                       Navigator.pop(context);
                     },

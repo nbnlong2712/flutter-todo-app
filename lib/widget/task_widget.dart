@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/screen/detail_task_screen.dart';
 import 'package:flutter_todo/model/task.dart';
@@ -18,7 +19,8 @@ class _TaskWidgetState extends State<TaskWidget> {
       padding: const EdgeInsets.all(8.0),
       child: GestureDetector(
         child: Card(
-          elevation: 3,
+          elevation: widget.task.isDone ? 0 : 3,
+          color: widget.task.isDone ? Colors.black26 : Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -30,7 +32,10 @@ class _TaskWidgetState extends State<TaskWidget> {
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       widget.task.taskName,
-                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                   ),
                   SizedBox(

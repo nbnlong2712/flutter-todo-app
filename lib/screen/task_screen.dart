@@ -1,7 +1,10 @@
 import 'package:filter_list/filter_list.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_todo/constant/constant.dart';
 import 'package:flutter_todo/dao/task_dao.dart';
+import 'package:flutter_todo/mobx/task_mobx.dart';
 import 'package:flutter_todo/model/task.dart';
 import 'package:flutter_todo/screen/add_task_screen.dart';
 import 'package:flutter_todo/widget/task_widget.dart';
@@ -16,6 +19,7 @@ class TaskScreen extends StatefulWidget {
 
 class _TaskScreenState extends State<TaskScreen> {
   TaskDAO taskDAO = TaskDAO();
+  TaskMobx taskMobx = TaskMobx();
 
   final List<Task> _taskList = [];
 
@@ -26,14 +30,18 @@ class _TaskScreenState extends State<TaskScreen> {
 
   @override
   void initState() {
+    taskMobx.initTasks();
     super.initState();
-    taskDAO.getAllTaskFromDB().then((value) {
+    print("INIT STATE");
+    /*taskDAO.getAllTaskFromDB().then((value) {
       _taskList.addAll(value);
-    });
+      print("Haha: " + _taskList.length.toString());
+    });*/
   }
-
+  
   @override
   Widget build(BuildContext context) {
+    taskMobx.initTasks();
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -82,9 +90,13 @@ class _TaskScreenState extends State<TaskScreen> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.8,
                       width: MediaQuery.of(context).size.width,
-                      child: ListView(
-                        scrollDirection: Axis.vertical,
-                        children: _taskList.map((task) => TaskWidget(task: task)).toList(),
+                      child: Observer(
+                        builder: (_){
+                          return ListView(
+                            scrollDirection: Axis.vertical,
+                            children: taskMobx.tasks.reversed.map((task) => TaskWidget(task: task)).toList(),
+                          );
+                        },
                       ),
                     ),
                   ],
