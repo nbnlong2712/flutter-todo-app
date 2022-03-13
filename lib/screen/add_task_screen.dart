@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_todo/dao/task_dao.dart';
 import 'package:flutter_todo/mobx/task_mobx.dart';
 import 'package:flutter_todo/model/task.dart';
+import 'package:flutter_todo/screen/task_screen.dart';
 import 'package:uuid/uuid.dart';
 
 class AddTaskScreen extends StatefulWidget {
@@ -158,7 +159,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           false);
                       TaskMobx().addTask(newTask);
                       taskDAO.insert(newTask);
-                      Navigator.pop(context);
+                      Navigator.popAndPushNamed(context, TaskScreen.router);
                     },
                   ),
                 ),

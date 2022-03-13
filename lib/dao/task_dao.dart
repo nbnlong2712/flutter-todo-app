@@ -19,6 +19,12 @@ class TaskDAO {
     await database!.insert("Task", task.toMap());
   }
 
+  void update(Task task) async {
+    await open(databaseName);
+    await database!.rawUpdate("update Task set taskName = ?, taskContent = ?, isDone = ? where id = ?",
+        [task.taskName, task.taskContent, task.isDone ? 1 : 0, task.id]);
+  }
+
   Future<List<Task>> getAllTaskFromDB() async {
     await open(databaseName);
     List<Map<String, dynamic>>? list = await database!.query("Task");
@@ -29,7 +35,7 @@ class TaskDAO {
               list[index]["taskName"],
               list[index]["taskContent"],
               DateFormat("yyyy-MM-dd hh:mm").parse(list[index]["date"]),
-              list[index]["isDone"] == 1? true : false,
+              list[index]["isDone"] == 1 ? true : false,
             ));
   }
 

@@ -13,6 +13,8 @@ import 'package:flutter_todo/widget/app_search_bar.dart';
 class TaskScreen extends StatefulWidget {
   TaskScreen({Key? key}) : super(key: key);
 
+  static const router = "/task-screen";
+
   @override
   State<TaskScreen> createState() => _TaskScreenState();
 }
@@ -21,24 +23,69 @@ class _TaskScreenState extends State<TaskScreen> {
   TaskDAO taskDAO = TaskDAO();
   TaskMobx taskMobx = TaskMobx();
 
-  final List<Task> _taskList = [];
-
-  List<String> selectedType = ["Today"];
+  List<String> selectedType = ["All days"];
 
   TextEditingController titleController = TextEditingController();
   TextEditingController contentController = TextEditingController();
+
+  String query = "";
+
+  List<Task> filterTasks() {
+    List<Task> foundTask = [];
+    switch (selectedType[0]) {
+      case "Today":
+        DateTime dayNow = DateTime.now();
+        for (var element in taskMobx.tasks) {
+          if (element.date.year == dayNow.year &&
+              element.date.month == dayNow.month &&
+              element.date.day == dayNow.day) {
+            foundTask.add(element);
+          }
+        }
+        break;
+      case "All days":
+        foundTask.addAll(taskMobx.tasks);
+        break;
+      case "Upcoming":
+        DateTime dayNow = DateTime.now();
+        for (var element in taskMobx.tasks) {
+          if (DateTime(
+                  element.date.year, element.date.month, element.date.day, element.date.hour, element.date.minute, 0)
+              .isAfter(dayNow)) {
+            foundTask.add(element);
+          }
+        }
+        break;
+      default:
+        foundTask.addAll(taskMobx.tasks);
+        break;
+    }
+    return foundTask;
+  }
+
+  List<Task> searchTask(String query){
+    List<Task> foundTask = [];
+    List<Task> tasks = filterTasks();
+    if (query.isEmpty) {
+      return tasks;
+    }
+    else{
+      for (var element in tasks) {
+        if(element.taskName.contains(query) || element.taskContent.contains(query))
+          {
+            foundTask.add(element);
+          }
+      }
+      return foundTask;
+    }
+  }
 
   @override
   void initState() {
     taskMobx.initTasks();
     super.initState();
-    print("INIT STATE");
-    /*taskDAO.getAllTaskFromDB().then((value) {
-      _taskList.addAll(value);
-      print("Haha: " + _taskList.length.toString());
-    });*/
   }
-  
+
   @override
   Widget build(BuildContext context) {
     taskMobx.initTasks();
@@ -84,17 +131,17 @@ class _TaskScreenState extends State<TaskScreen> {
             child: Flex(
               direction: Axis.vertical,
               children: <Widget>[
-                AppSearchBar(hint: "Search task...", onQueryChanged: (task) {}),
+                AppSearchBar(hint: "Search task...", onQueryChanged: (task) {query = task;}),
                 Column(
                   children: <Widget>[
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.8,
                       width: MediaQuery.of(context).size.width,
                       child: Observer(
-                        builder: (_){
+                        builder: (_) {
                           return ListView(
                             scrollDirection: Axis.vertical,
-                            children: taskMobx.tasks.reversed.map((task) => TaskWidget(task: task)).toList(),
+                            children: searchTask(query).reversed.map((task) => TaskWidget(task: task)).toList(),
                           );
                         },
                       ),

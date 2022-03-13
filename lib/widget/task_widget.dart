@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_todo/dao/task_dao.dart';
 import 'package:flutter_todo/screen/detail_task_screen.dart';
 import 'package:flutter_todo/model/task.dart';
 
@@ -13,6 +14,8 @@ class TaskWidget extends StatefulWidget {
 }
 
 class _TaskWidgetState extends State<TaskWidget> {
+  TaskDAO taskDAO = TaskDAO();
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -58,9 +61,10 @@ class _TaskWidgetState extends State<TaskWidget> {
                       ? const Icon(Icons.check_box, color: Colors.green, size: 28)
                       : const Icon(Icons.crop_square_outlined, color: Colors.black54, size: 28),
                 ),
-                onTap: () {
+                onTap: () async {
                   setState(() {
                     widget.task.isDone ? widget.task.isDone = false : widget.task.isDone = true;
+                    taskDAO.update(widget.task);
                   });
                 },
               ),

@@ -1,13 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_todo/dao/task_dao.dart';
 import 'package:flutter_todo/model/task.dart';
+import 'package:flutter_todo/screen/task_screen.dart';
 
-class DetailTaskScreen extends StatelessWidget {
+class DetailTaskScreen extends StatefulWidget {
   DetailTaskScreen({Key? key, required this.task}) : super(key: key);
 
   Task task;
 
   @override
+  State<DetailTaskScreen> createState() => _DetailTaskScreenState();
+}
+
+class _DetailTaskScreenState extends State<DetailTaskScreen> {
+  TextEditingController nameController = TextEditingController();
+
+  TextEditingController contentController = TextEditingController();
+
+  @override
   Widget build(BuildContext context) {
+    nameController.text = widget.task.taskName;
+    contentController.text = widget.task.taskContent;
+
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
@@ -22,12 +36,10 @@ class DetailTaskScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: GestureDetector(
-              child: const Icon(
-                Icons.delete_outline,
-                color: Colors.black,
-              ),
+              child: const Icon(Icons.delete_outline, color: Colors.black),
               onTap: () {
-                Navigator.pop(context);
+                TaskDAO().delete(widget.task.id!);
+                Navigator.popAndPushNamed(context, TaskScreen.router);
               },
             ),
           ),
@@ -35,7 +47,12 @@ class DetailTaskScreen extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             child: FloatingActionButton.extended(
               backgroundColor: Colors.green,
-              onPressed: () {},
+              onPressed: () {
+                widget.task.taskName = nameController.text;
+                widget.task.taskContent = contentController.text;
+                TaskDAO().update(widget.task);
+                Navigator.popAndPushNamed(context, TaskScreen.router);
+              },
               elevation: 0,
               label: const Text("Save"),
             ),
@@ -44,25 +61,54 @@ class DetailTaskScreen extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
-          Text(task.taskName, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),),
+          TextField(
+            controller: nameController,
+            cursorColor: Colors.green,
+            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.w600),
+            decoration: const InputDecoration(border: OutlineInputBorder(borderSide: BorderSide.none)),
+            textAlign: TextAlign.center,
+          ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(task.date.toString(), style: TextStyle(fontStyle: FontStyle.italic, color: Colors.black54),),
+                child: Text(widget.task.date.toString(),
+                    style: const TextStyle(fontStyle: FontStyle.italic, color: Colors.black54)),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 18.0),
                 child: GestureDetector(
-                  child: task.isDone
-                      ? const Icon(Icons.check_box, color: Colors.green, size: 30,)
-                      : const Icon(Icons.crop_square_outlined, size: 30,),
+                  child: widget.task.isDone
+                      ? const Icon(Icons.check_box, color: Colors.green, size: 30)
+                      : const Icon(Icons.crop_square_outlined, size: 30),
+                  onTap: (){
+                    setState(() {
+                      widget.task.isDone ? widget.task.isDone = false : widget.task.isDone = true;
+                    });
+                  },
                 ),
               ),
             ],
           ),
-          Text(task.taskContent),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: contentController,
+              maxLines: 12,
+              cursorColor: Colors.green,
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: const BorderSide(color: Colors.black12, width: 1),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: const BorderSide(color: Colors.green, width: 1),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );

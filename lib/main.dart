@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_todo/screen/task_screen.dart';
 
-void main(){
+void main() {
   runApp(MyApp());
 }
 
@@ -10,9 +10,8 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: TaskScreen(),
-      debugShowCheckedModeBanner: false,
-    );
+    return MaterialApp(home: TaskScreen(), debugShowCheckedModeBanner: false, routes: {
+      TaskScreen.router: (context) => TaskScreen(),
+    });
   }
 }
