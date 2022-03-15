@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class Task {
@@ -21,7 +22,15 @@ class Task {
             " " +
             date.hour.toString() +
             ":" +
-            date.minute.toString() + ":0"),
+            date.minute.toString() +
+            ":0"),
         "isDone": isDone ? 1 : 0,
       };
+
+  Task.fromMap(Map<String, dynamic> json)
+      : id = json["id"],
+        taskName = json["taskName"],
+        taskContent = json["taskContent"],
+        date = DateFormat("yyyy-MM-dd hh:mm").parse(json["date"]),
+        isDone = json["isDone"] == 1 ? true : false;
 }

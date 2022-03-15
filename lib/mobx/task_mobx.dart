@@ -8,6 +8,14 @@ abstract class TaskBase with Store{
   @observable
   ObservableList<Task> tasks = ObservableList.of([]);
 
+  @observable
+  Task singleTask = Task("", "", "", DateTime.now(), false);
+
+  @action
+  int timeLeftTask(){
+    return singleTask.date.difference(DateTime.now()).inMinutes;
+  }
+
   @action
   void addTask(Task newTask){
     tasks.add(newTask);

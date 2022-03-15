@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_todo/model/task.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart';
@@ -29,14 +30,21 @@ class TaskDAO {
     await open(databaseName);
     List<Map<String, dynamic>>? list = await database!.query("Task");
     return List.generate(
-        list.length,
-        (index) => Task(
-              list[index]["id"],
-              list[index]["taskName"],
-              list[index]["taskContent"],
-              DateFormat("yyyy-MM-dd hh:mm").parse(list[index]["date"]),
-              list[index]["isDone"] == 1 ? true : false,
-            ));
+      list.length,
+      (index) => Task(
+        list[index]["id"],
+        list[index]["taskName"],
+        list[index]["taskContent"],
+        DateFormat("yyyy-MM-dd hh:mm").parse(list[index]["date"]),
+        list[index]["isDone"] == 1 ? true : false,
+      ),
+    );
+  }
+
+  Future<Task> getTaskById(String id) async {
+    await open(databaseName);
+    List<Map<String, dynamic>>? list = await database!.rawQuery("select * from Task where id = $id");
+    return Task.fromMap(list[0]);
   }
 
   Future delete(String id) async {

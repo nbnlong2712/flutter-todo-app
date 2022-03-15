@@ -1,6 +1,7 @@
 import 'package:filter_list/filter_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_todo/constant/constant.dart';
 import 'package:flutter_todo/dao/task_dao.dart';
@@ -9,6 +10,8 @@ import 'package:flutter_todo/model/task.dart';
 import 'package:flutter_todo/screen/add_task_screen.dart';
 import 'package:flutter_todo/widget/task_widget.dart';
 import 'package:flutter_todo/widget/app_search_bar.dart';
+
+FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
 class TaskScreen extends StatefulWidget {
   TaskScreen({Key? key}) : super(key: key);
@@ -83,7 +86,14 @@ class _TaskScreenState extends State<TaskScreen> {
   @override
   void initState() {
     taskMobx.initTasks();
+
     super.initState();
+    //local notification
+    var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+    var initializationSettingsIOs = IOSInitializationSettings();
+    var initSetttings = InitializationSettings(android: initializationSettingsAndroid, iOS: initializationSettingsIOs);
+    flutterLocalNotificationsPlugin.initialize(initSetttings);
+
   }
 
   @override

@@ -24,6 +24,21 @@ mixin _$TaskMobx on TaskBase, Store {
     });
   }
 
+  final _$singleTaskAtom = Atom(name: 'TaskBase.singleTask');
+
+  @override
+  Task get singleTask {
+    _$singleTaskAtom.reportRead();
+    return super.singleTask;
+  }
+
+  @override
+  set singleTask(Task value) {
+    _$singleTaskAtom.reportWrite(value, super.singleTask, () {
+      super.singleTask = value;
+    });
+  }
+
   final _$initTasksAsyncAction = AsyncAction('TaskBase.initTasks');
 
   @override
@@ -32,6 +47,17 @@ mixin _$TaskMobx on TaskBase, Store {
   }
 
   final _$TaskBaseActionController = ActionController(name: 'TaskBase');
+
+  @override
+  int timeLeftTask() {
+    final _$actionInfo =
+        _$TaskBaseActionController.startAction(name: 'TaskBase.timeLeftTask');
+    try {
+      return super.timeLeftTask();
+    } finally {
+      _$TaskBaseActionController.endAction(_$actionInfo);
+    }
+  }
 
   @override
   void addTask(Task newTask) {
@@ -47,7 +73,8 @@ mixin _$TaskMobx on TaskBase, Store {
   @override
   String toString() {
     return '''
-tasks: ${tasks}
+tasks: ${tasks},
+singleTask: ${singleTask}
     ''';
   }
 }

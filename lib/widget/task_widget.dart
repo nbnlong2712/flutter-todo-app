@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:flutter_todo/dao/task_dao.dart';
+import 'package:flutter_todo/mobx/task_mobx.dart';
 import 'package:flutter_todo/screen/detail_task_screen.dart';
 import 'package:flutter_todo/model/task.dart';
 
@@ -8,6 +10,7 @@ class TaskWidget extends StatefulWidget {
   TaskWidget({Key? key, required this.task}) : super(key: key);
 
   Task task;
+  int? timeLeft;
 
   @override
   State<TaskWidget> createState() => _TaskWidgetState();
@@ -15,6 +18,12 @@ class TaskWidget extends StatefulWidget {
 
 class _TaskWidgetState extends State<TaskWidget> {
   TaskDAO taskDAO = TaskDAO();
+  int time = 0;
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

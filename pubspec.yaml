@@ -24,6 +24,8 @@ dependencies:
   flutter_mobx: ^2.0.4
   mobx_codegen: ^2.0.5+2
   build_runner: ^2.1.7
+  flutter_local_notifications: ^6.0.0
+  rxdart: ^0.27.3
 
 dev_dependencies:
   flutter_test:

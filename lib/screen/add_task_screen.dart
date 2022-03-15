@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:date_time_picker/date_time_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_todo/dao/task_dao.dart';
 import 'package:flutter_todo/mobx/task_mobx.dart';
 import 'package:flutter_todo/model/task.dart';
@@ -25,7 +28,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   DateTime selectedDate = DateTime.now();
   TaskDAO taskDAO = TaskDAO();
   TaskMobx taskMobx = TaskMobx();
-  
+
   _pickTime(BuildContext context) async {
     final TimeOfDay? timeOfDay = await showTimePicker(
       context: context,
@@ -49,7 +52,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
           borderSide: const BorderSide(color: Colors.black26), borderRadius: BorderRadius.circular(12)),
     );
   }
-  
+
   @override
   void initState() {
     taskMobx.initTasks();
@@ -60,7 +63,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   void didChangeDependencies() {
     super.didChangeDependencies();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -149,7 +152,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   child: FloatingActionButton.extended(
                     backgroundColor: Colors.green,
                     label: const Text("Add task"),
-                    onPressed: () {
+                    onPressed: () async {
                       Task newTask = Task(
                           Uuid().v1(),
                           widget.titleController.text,
@@ -159,6 +162,19 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           false);
                       TaskMobx().addTask(newTask);
                       taskDAO.insert(newTask);
+                      if (newTask.date.isAfter(DateTime.now())) {
+                        await flutterLocalNotificationsPlugin.schedule(
+                          Random().nextInt(99999999),
+                          newTask.taskName,
+                          newTask.taskContent,
+                          newTask.date.subtract(
+                              Duration(minutes: (newTask.date.difference(DateTime.now()).inMinutes - 10).toInt())),
+                          NotificationDetails(
+                              android: AndroidNotificationDetails(
+                                  newTask.taskName, newTask.taskContent, newTask.taskContent)),
+                          androidAllowWhileIdle: true,
+                        );
+                      }
                       Navigator.popAndPushNamed(context, TaskScreen.router);
                     },
                   ),
